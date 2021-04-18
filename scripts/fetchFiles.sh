@@ -122,6 +122,16 @@ main(){
             exit 1
         fi
     fi
+    if [ "${type}" == "fasta" ]
+    then
+        fileStandard="genome.fa"
+    elif [ "${type}" == "gtf" ]
+    then
+        fileStandard="genome.gtf"
+    else
+        echo "LOG: file format does not match standard"
+        exit 1
+    fi
 
     #fetch file
     echo "LOG: fetching file"
@@ -143,19 +153,19 @@ main(){
         if gzip -t ${file}
         then
             echo "LOG: gzip passed integrity test"
-            mv ${file} genome.fa.gz
+            mv ${file} ${fileStandard}.gz
             echo "LOG: file renamed"
         else
             echo "LOG: gzip failed integrity test"
             exit 1
         fi
     else
-        gzip -c ${file} > genome.fa.gz
+        gzip -c ${file} > ${fileStandard}.gz
         echo "LOG: file zipped and renamed"
     fi
 
     #basic file type test
-    if [ "${type}" == "fasta" ] && [ "$(zcat genome.fa.gz | head -n1 | head -c 1)" == ">" ]
+    if [ "${type}" == "fasta" ] && [ "$(zcat ${fileStandard}.gz | head -n1 | head -c 1)" == ">" ]
     then
         echo "LOG: first line of fasta file does contain header"
     elif [ "${type}" == "gtf" ]

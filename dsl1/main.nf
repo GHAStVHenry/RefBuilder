@@ -58,3 +58,22 @@ process download_fasta {
         bash ${script_fetchFile} -t fasta -l ${fasta_loc}
         """
 }
+
+/*
+ download_gtf: downloads the gtf
+ */
+process download_gtf {
+    tag "${gtf_name}"
+
+    input:
+        val gtf_loc
+        file script_fetchFile from script_fetchFile_gtf
+
+    output:
+        tuple val(gtf_name), file('genome.gtf.gz') into gtf
+
+    script:
+        """
+        bash ${script_fetchFile} -t gtf -l ${fasta_loc}
+        """
+}
