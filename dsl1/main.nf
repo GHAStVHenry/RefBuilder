@@ -100,13 +100,16 @@ process build_hisat2 {
         mkdir -p hisat2
 
         #build the splice-site file
+        echo "LOG: bulding the splice-site file"
 	    hisat2_extract_splice_sites.py ${gtf} > ./tmp/genome.ss &
 
 	    #build the exon file
+        echo "LOG: building the exon file"
 	    hisat2_extract_exons.py ${gtf}  >./tmp/genome.exon &
 
-	    #build the HISAT2 references
+	    #build the HISAT2 reference
 	    wait
+        echo "LOG: building reference"
 	    hisat2-build -p \$(nproc) --ss ./tmp/genome.ss --exon ./tmp/genome.exon ${fasta} hisat2/genome
         """
 }
