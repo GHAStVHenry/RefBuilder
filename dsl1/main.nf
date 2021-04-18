@@ -7,14 +7,14 @@ params.gtf_loc = "ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/releas
 params.gtf_name = "GENCODE.v37"
 
 //define aligner to build references for
-params.build_hisat2=true
+params.hisat2=true
 
 //parse veriables
 fasta_loc = params.fasta_loc
 fasta_name = params.fasta_name
 gtf_loc = params.gtf_loc
 gtf_name = params.gtf_name
-build_hisat2 = params.build_hisat2
+hisat2 = params.hisat2
 
 //define fixed files
 script_fetchFile = Channel.fromPath("../scripts/fetchFiles.sh")
@@ -36,7 +36,7 @@ Reference Builder
 fasta:  ${params.fasta_name}
 gtf:    ${params.gtf_name}
 ------------------
-HISAT2: ${params.build_hisat2}
+HISAT2: ${params.hisat2}
 ------------------
 """
 
@@ -75,5 +75,38 @@ process download_gtf {
     script:
         """
         bash ${script_fetchFile} -t gtf -l ${gtf_loc}
+        """
+}
+
+/*
+ build_hisat2: build HISAT2 references
+  */
+process build_hisat2 {
+    tag "HISAT2"
+
+    input:
+        file fasta
+        file gtf
+    
+    output:
+        file "hisat2/*" as ref_hisat2
+    
+    when:
+        hisat2
+    
+    script:
+        """
+        mkdir -p temp
+        mkdir -p hisat2
+
+        #build the splice-site file
+	    hisat2_extract_splice_sites.py ${gtf} > ./tmp/genome.ss &
+
+	    #build the exon file
+	    hisat2_extract_exons.py ${gtf}  >./tmp/genome.exon &
+
+	    #build the HISAT2 references
+	    wait
+	    hisat2-build -p \$(nproc) --ss ./tmp/genome.ss --exon ./tmp/genome.exon ${fasta} hisat2/genome
         """
 }
