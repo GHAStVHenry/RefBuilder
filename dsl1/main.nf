@@ -145,6 +145,6 @@ gunzip ${gtf} &
 #build the STAR reference
 wait
 echo "LOG: building reference"
-STAR --runThreadN \$(nproc) --runMode genomeGenerate --genomeFastaFiles genome.fa --sjdbGTFFile genome.gtf --genomeDir star
+STAR --runThreadN \$(nproc) --runMode genomeGenerate --genomeFastaFiles genome.fa --sjdbGTFfile genome.gtf --genomeDir star
         """
 }
