@@ -84,16 +84,20 @@ main(){
         then
             echo "LOG: fasta extension detected"
             ext=true
-        else
+        elif [ "${type}" == "fasta" ] && [ "${file: -5:-3}" != "fa" ] || [ "${file: -8:-3}" != "fasta" ]
+        then
             echo "LOG: fasta extension not detected"
             exit 1
-        fi
-    elif [ "${type}" == "gtf" ] && [ "${file: -6:-3}" == "gtf" ]
-    then
+        elif [ "${type}" == "gtf" ] && [ "${file: -6:-3}" == "gtf" ]
+        then
             echo "LOG: gtf extension detected"
             ext=true
-        else
+        elif [ "${type}" == "gtf" ] && [ "${file: -6:-3}" != "gtf" ]
+        then
             echo "LOG: gtf extension not detected"
+            exit 1
+        else
+            echo "LOG: invalid file type selected"
             exit 1
         fi
     else
@@ -101,18 +105,26 @@ main(){
         then
             echo "LOG: fasta extension detected"
             ext=true
+        elif [ "${type}" == "fasta" ] && [ "${file: -2}" != "fa" ] && [ "${file: -5}" != "fasta" ]
+        then
+            echo "LOG: fasta extension not detected"
+            exit 1
         elif [ "${type}" == "gtf" ] && ([ "${file: -3}" == "gtf" ]
         then
             echo "LOG: gtf extension detected"
             ext=true
+        elif [ "${type}" == "gtf" ] && ([ "${file: -3}" != "gtf" ]
+        then
+            echo "LOG: gtf extension not detected"
+            exit 1
         else
-            echo "LOG: fasta extension not detected"
+            echo "LOG: invalid file type selected"
             exit 1
         fi
     fi
 
     #fetch file
-echo "LOG: fetching file"
+    echo "LOG: fetching file"
     if [ "${source}" == "url" ]
     then
         echo "LOG: downloading file"
