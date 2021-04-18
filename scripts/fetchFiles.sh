@@ -84,7 +84,7 @@ main(){
         then
             echo "LOG: fasta extension detected"
             ext=true
-        elif [ "${type}" == "fasta" ] && [ "${file: -5:-3}" != "fa" ] || [ "${file: -8:-3}" != "fasta" ]
+        elif [ "${type}" == "fasta" ] && [ "${file: -5:-3}" != "fa" ] && [ "${file: -8:-3}" != "fasta" ]
         then
             echo "LOG: fasta extension not detected"
             exit 1
@@ -109,11 +109,11 @@ main(){
         then
             echo "LOG: fasta extension not detected"
             exit 1
-        elif [ "${type}" == "gtf" ] && ([ "${file: -3}" == "gtf" ]
+        elif [ "${type}" == "gtf" ] && [ "${file: -3}" == "gtf" ]
         then
             echo "LOG: gtf extension detected"
             ext=true
-        elif [ "${type}" == "gtf" ] && ([ "${file: -3}" != "gtf" ]
+        elif [ "${type}" == "gtf" ] && [ "${file: -3}" != "gtf" ]
         then
             echo "LOG: gtf extension not detected"
             exit 1
