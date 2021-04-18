@@ -18,6 +18,7 @@ hisat2 = params.hisat2
 
 //define fixed files
 script_fetchFile = Channel.fromPath("../scripts/fetchFiles.sh")
+script_hisat2Build = Channel.fromPath("../scripts/hisat2Build.sh")
 
 //distribute fixed files
 script_fetchFile.into{
@@ -87,6 +88,7 @@ process build_hisat2 {
     input:
         tuple val(name_fasta), path(fasta) from fasta
         tuple val(name_gtf), path(gtf) from gtf
+        path script_hisat2Build
 
     output:
         path "hisat2/*" into ref_hisat2
@@ -96,26 +98,6 @@ process build_hisat2 {
     
     script:
         """
-        mkdir -p hisat2
-
-        #gunzip files
-        echo "LOG: gunzipping fasta" &
-        gunzip ${fasta} &
-        echo "LOG: gunzipping gtf" &
-        gunzip ${gtf} &
-        
-        #build the splice-site file
-        wait
-        echo "LOG: bulding the splice-site file" &
-	    hisat2_extract_splice_sites.py genome.gtf > genome.ss &
-
-	    #build the exon file
-        echo "LOG: building the exon file" &
-	    hisat2_extract_exons.py genome.gtf > genome.exon &
-
-	    #build the HISAT2 reference
-	    wait
-        echo "LOG: building reference"
-	    hisat2-build -p \$(nproc) --ss genome.ss --exon genome.exon genome.fa hisat2/genome
+        bash hisat2Build.sh
         """
 }
