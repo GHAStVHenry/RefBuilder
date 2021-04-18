@@ -99,17 +99,21 @@ process build_hisat2 {
         mkdir -p temp
         mkdir -p hisat2
 
+        #gunzip files
+        gunzip ${fasta}
+        gunzip ${gtf}
+        
         #build the splice-site file
         echo "LOG: bulding the splice-site file"
-	    hisat2_extract_splice_sites.py ${gtf} > ./tmp/genome.ss &
+	    hisat2_extract_splice_sites.py genome.gtf > ./tmp/genome.ss &
 
 	    #build the exon file
         echo "LOG: building the exon file"
-	    hisat2_extract_exons.py ${gtf}  >./tmp/genome.exon &
+	    hisat2_extract_exons.py genome.gtf >./tmp/genome.exon &
 
 	    #build the HISAT2 reference
 	    wait
         echo "LOG: building reference"
-	    hisat2-build -p \$(nproc) --ss ./tmp/genome.ss --exon ./tmp/genome.exon ${fasta} hisat2/genome
+	    hisat2-build -p \$(nproc) --ss ./tmp/genome.ss --exon ./tmp/genome.exon genome.fa hisat2/genome
         """
 }
