@@ -16,6 +16,7 @@ fasta_name = params.fasta_name
 gtf_loc = params.gtf_loc
 gtf_name = params.gtf_name
 hisat2 = params.hisat2
+star = params.star
 
 //define fixed files
 script_fetchFile = Channel.fromPath("../scripts/fetchFiles.sh")
@@ -126,7 +127,7 @@ process build_star {
 
     output:
         path "star/*" into ref_star
-        
+
     when:
         star
     
