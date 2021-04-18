@@ -92,7 +92,7 @@ process download_fasta {
         then
             echo "LOG: gzip extension detected"
             gz=true
-            if [ "\${file:\${i}-5:-3}" == "fa" ] || [ "\${file:\${i}-8:-3}" == "fasta" ]
+            if [ "\${file: -5:-3}" == "fa" ] || [ "\${file: -8:-3}" == "fasta" ]
             then
                 echo "LOG: fasta extension detected"
                 fa=true
