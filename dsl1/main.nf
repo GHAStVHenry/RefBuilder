@@ -35,7 +35,7 @@ build_hisat2 = params.build_hisat2
  download_fasta: downloads the fasta
  */
 process download_fasta {
-    tag ${fasta_name}
+    tag "${fasta_name}"
 
     input:
         val fasta_loc
@@ -66,7 +66,7 @@ process download_fasta {
                 if grep -q "Scheme missing" downloadTest.log
                 then
                     echo "LOG: not a valid"
-                    if [ -d $(dirname ${fasta_loc }) ]
+                    if [ -d \$(dirname ${fasta_loc}) ]
                     then
                         echo "LOG: local folder exists"
                         if [ -f ${fasta_loc} ]
@@ -86,12 +86,12 @@ process download_fasta {
         fi
 
         echo "LOG: testing filename"
-        file=$(basename ${fasta_loc})
-        if [ "${file: -2}" == "gz" ]
+        file=\$(basename ${fasta_loc})
+        if [ "\${file: -2}" == "gz" ]
         then
             echo "LOG: gzip extension detected"
             gz=true
-            if [ "${file:${i}-5:-3}" == "fa" ] || [ "${file:${i}-8:-3}" == "fasta" ]
+            if [ "\${file:\${i}-5:-3}" == "fa" ] || [ "\${file:\${i}-8:-3}" == "fasta" ]
             then
                 echo "LOG: fasta extension detected"
                 fa=true
@@ -100,7 +100,7 @@ process download_fasta {
                 exit 1
             fi
         else
-            if [ "${file: -2}" == "fa" ] || [ "${file: -5}" == "fasta" ]
+            if [ "\${file: -2}" == "fa" ] || [ "\${file: -5}" == "fasta" ]
             then
                 echo "LOG: fasta extension detected"
                 fa=true
@@ -139,7 +139,7 @@ process download_fasta {
             echo "LOG: file zipped and renamed"
         fi
 
-        if [ "$(zcat genome.fa.gz | head -n1 | head -c 1)" == ">" ]
+        if [ "\$(zcat genome.fa.gz | head -n1 | head -c 1)" == ">" ]
         then
             echo "LOG: first line of file does contain header"
         else
