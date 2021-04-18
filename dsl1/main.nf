@@ -100,15 +100,18 @@ process build_hisat2 {
         mkdir -p hisat2
 
         #gunzip files
-        gunzip ${fasta}
-        gunzip ${gtf}
+        echo "LOG: gunzipping fasta" &
+        gunzip ${fasta} &
+        echo "LOG: gunzipping gtf" &
+        gunzip ${gtf} &
         
         #build the splice-site file
-        echo "LOG: bulding the splice-site file"
+        wait
+        echo "LOG: bulding the splice-site file" &
 	    hisat2_extract_splice_sites.py genome.gtf > ./tmp/genome.ss &
 
 	    #build the exon file
-        echo "LOG: building the exon file"
+        echo "LOG: building the exon file" &
 	    hisat2_extract_exons.py genome.gtf >./tmp/genome.exon &
 
 	    #build the HISAT2 reference
