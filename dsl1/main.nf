@@ -111,7 +111,7 @@ process build_hisat2 {
     
     script:
         """
-        bash hisat2Build.sh
+        bash hisat2Build.sh -f ${fasta} -g ${gtf}
         """
 }
 
