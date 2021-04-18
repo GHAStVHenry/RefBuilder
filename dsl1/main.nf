@@ -8,6 +8,7 @@ params.gtf_name = "GENCODE.v37"
 
 //define aligner to build references for
 params.hisat2=true
+params.star=true
 
 //parse veriables
 fasta_loc = params.fasta_loc
@@ -38,6 +39,7 @@ fasta:  ${params.fasta_name}
 gtf:    ${params.gtf_name}
 ------------------
 HISAT2: ${params.hisat2}
+STAR:   ${params.star}
 ------------------
 """
 
@@ -79,6 +81,16 @@ process download_gtf {
         """
 }
 
+//distribute fasta and gtf files to different build processes
+fasta.into{
+    fasta_hisat2
+    fasta_star
+}
+gtf.into{
+    gtf_hisat2
+    gtf_star
+}
+
 /*
  build_hisat2: build HISAT2 references
   */
@@ -86,8 +98,8 @@ process build_hisat2 {
     tag "${fasta_name}"
 
     input:
-        tuple val(name_fasta), path(fasta) from fasta
-        tuple val(name_gtf), path(gtf) from gtf
+        tuple val(name_fasta), path(fasta) from fasta_hisat2
+        tuple val(name_gtf), path(gtf) from gtf_hisat2
         path script_hisat2Build
 
     output:
@@ -99,5 +111,38 @@ process build_hisat2 {
     script:
         """
         bash hisat2Build.sh
+        """
+}
+
+/*
+ build_star: build STAR references
+  */
+process build_star {
+    tag "${fasta_name}"
+
+    input:
+        tuple val(name_fasta), path(fasta) from fasta_star
+        tuple val(name_gtf), path(gtf) from gtf_star
+
+    output:
+        path "star/*" into ref_star
+        
+    when:
+        star
+    
+    script:
+        """
+mkdir -p star
+
+#gunzip files
+echo "LOG: gunzipping fasta" &
+gunzip ${fasta} &
+echo "LOG: gunzipping gtf" &
+gunzip ${gtf} &
+
+#build the STAR reference
+wait
+echo "LOG: building reference"
+STAR --runThreadN \$(nproc) --runMode genomeGenerate --genomeFastaFiles genome.fa --sjdbGTFFile genome.gtf --genomeDir star
         """
 }
