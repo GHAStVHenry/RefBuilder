@@ -82,7 +82,7 @@ process download_gtf {
  build_hisat2: build HISAT2 references
   */
 process build_hisat2 {
-    tag "HISAT2"
+    tag "${fasta_name}"
 
     input:
         tuple val(name_fasta), path(fasta) from fasta
