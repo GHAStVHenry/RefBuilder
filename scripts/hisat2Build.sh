@@ -1,23 +1,57 @@
 #!/bin/bash -eufxv -o pipefail
 
-mkdir -p hisat2
+script_name="hisat2Build.sh"
 
-#gunzip files
-echo "LOG: gunzipping fasta" &
-gunzip ${fasta} &
-echo "LOG: gunzipping gtf" &
-gunzip ${gtf} &
+#help function
+usage() {
+  echo "-h  help documentation for $script_name"
+  echo "-f  fasta file location (gzipped)"
+  echo "-g  gtf file location (gzipped)"
+  echo "Example: $script_name -f genome.fa.gz -g genome.gtf.gz"
+  exit 1
+}
 
-#build the splice-site file
-wait
-echo "LOG: bulding the splice-site file" &
-hisat2_extract_splice_sites.py genome.gtf > genome.ss &
+main(){
+    #parse options
+    OPTIND=1
+    while getopts :f:g:h opt
+        do
+            case $opt in
+                f) fasta=$OPTARG;;
+                g) gtf=$OPTARG;;
+                h) usage;;
+            esac
+        done
 
-#build the exon file
-echo "LOG: building the exon file" &
-hisat2_extract_exons.py genome.gtf > genome.exon &
+    shift $(($OPTIND -1))
 
-#build the HISAT2 reference
-wait
-echo "LOG: building reference"
-hisat2-build -p \$(nproc) --ss genome.ss --exon genome.exon genome.fa hisat2/genome
+    #check for mandatory options
+    if [[ -z ${fasta}} ]] || [[ -z ${gtf} ]]
+    then
+        usage
+    fi
+
+    mkdir -p hisat2
+
+    #gunzip files
+    echo "LOG: gunzipping fasta" &
+    gunzip -c ${fasta} > genome.fa &
+    echo "LOG: gunzipping gtf" &
+    gunzip -c ${gtf} > genome.gtf &
+
+    #build the splice-site file
+    wait
+    echo "LOG: bulding the splice-site file" &
+    hisat2_extract_splice_sites.py genome.gtf > genome.ss &
+
+    #build the exon file
+    echo "LOG: building the exon file" &
+    hisat2_extract_exons.py genome.gtf > genome.exon &
+
+    #build the HISAT2 reference
+    wait
+    echo "LOG: building reference"
+    hisat2-build -p \$(nproc) --ss genome.ss --exon genome.exon genome.fa hisat2/genome
+}
+
+main "$@"
