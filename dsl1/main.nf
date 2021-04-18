@@ -50,7 +50,7 @@ process download_fasta {
         if grep -q "connected" downloadTest.log
         then
             echo "LOG: url host exists"
-            if grep -q "File .* exists" download.log
+            if grep -q "File .* exists" downloadTest.log
             then
                 echo "LOG: file does exists"
                 source="url"
