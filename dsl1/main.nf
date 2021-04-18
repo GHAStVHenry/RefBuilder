@@ -74,6 +74,6 @@ process download_gtf {
 
     script:
         """
-        bash ${script_fetchFile} -t gtf -l ${fasta_loc}
+        bash ${script_fetchFile} -t gtf -l ${gtf_loc}
         """
 }
