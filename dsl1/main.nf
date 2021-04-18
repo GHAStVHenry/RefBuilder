@@ -85,8 +85,8 @@ process build_hisat2 {
     tag "HISAT2"
 
     input:
-        path fasta
-        path gtf
+        tuple val(name_fasta), path(fasta) from fasta
+        tuple val(name_gtf), path(gtf) from gtf
 
     output:
         path "hisat2/*" into ref_hisat2
