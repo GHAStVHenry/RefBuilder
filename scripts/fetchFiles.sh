@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eufxv -o pipefail
 
 script_name="fetchFiles.sh"
 
