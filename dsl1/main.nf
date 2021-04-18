@@ -57,6 +57,7 @@ process download_fasta {
             else
                 echo "LOG: file does not exist"
                 exit 1
+            fi
         else
             if grep -q "failed: Name or service not known" downloadTest.log
             then
