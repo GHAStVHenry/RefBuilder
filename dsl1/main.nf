@@ -85,11 +85,11 @@ process build_hisat2 {
     tag "HISAT2"
 
     input:
-        file fasta
-        file gtf
-    
+        path fasta
+        path gtf
+
     output:
-        path "hisat2/*" as ref_hisat2
+        path "hisat2/*" into ref_hisat2
     
     when:
         hisat2
