@@ -51,7 +51,7 @@ main(){
     #build the HISAT2 reference
     wait
     echo "LOG: building reference"
-    hisat2-build -p \$(nproc) --ss genome.ss --exon genome.exon genome.fa hisat2/genome
+    hisat2-build -p $(nproc) --ss genome.ss --exon genome.exon genome.fa hisat2/genome
 }
 
 main "$@"
