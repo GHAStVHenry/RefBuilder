@@ -48,7 +48,7 @@ process download_fasta {
 
     input:
         val fasta_loc
-        file script_fetchFile from script_fetchFile_fasta
+        path script_fetchFile from script_fetchFile_fasta
 
     output:
         tuple val(fasta_name), file('genome.fa.gz') into fasta
@@ -67,7 +67,7 @@ process download_gtf {
 
     input:
         val gtf_loc
-        file script_fetchFile from script_fetchFile_gtf
+        path script_fetchFile from script_fetchFile_gtf
 
     output:
         tuple val(gtf_name), file('genome.gtf.gz') into gtf
@@ -89,7 +89,7 @@ process build_hisat2 {
         file gtf
     
     output:
-        file "hisat2/*" as ref_hisat2
+        path "hisat2/*" as ref_hisat2
     
     when:
         hisat2
