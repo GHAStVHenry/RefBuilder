@@ -1,5 +1,21 @@
 #!/usr/bin/env nextflow
 
+//define input files
+params.fasta_loc = "ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37/GRCh38.p13.genome.fa.gz"
+params.fasta_name = "GRCh38.p13"
+params.gtf_loc = "ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37/gencode.v37.annotation.gtf.gz"
+params.gtf_name = "GENCODE.v37"
+
+//defines aligner to build references for
+params.build_hisat2=true
+
+//parse veriables
+fasta_loc = params.fasta_loc
+fasta_name = params.fasta_name
+gtf_loc = params.gtf_loc
+gtf_name = params.gtf_name
+build_hisat2 = params.build_hisat2
+
 log.info """\
 ==================
     ╔═╗╦ ╦╦ ╦    
@@ -14,22 +30,6 @@ gtf:    ${params.gtf_name}
 HISAT2: ${params.build_hisat2}
 ------------------
 """
-
-//define input files
-params.fasta_loc = "ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37/GRCh38.p13.genome.fa.gz"
-params.fastq_name = "GRCh38.p13"
-params.gtf_loc = "ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37/gencode.v37.annotation.gtf.gz"
-params.gtf_name = "GENCODE.v37"
-
-//defines aligner to build references for
-params.build_hisat2=true
-
-//parse veriables
-fasta_loc = params.fasta_loc
-fasta_name = params.fasta_name
-gtf_loc = params.gtf_loc
-gtf_name = params.gtf_name
-build_hisat2 = params.build_hisat2
 
 /*
  download_fasta: downloads the fasta
