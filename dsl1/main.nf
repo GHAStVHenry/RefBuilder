@@ -53,7 +53,7 @@ process download_fasta {
     tag "${fasta_name}"
 
     input:
-        path script_fetchFile
+        path script_fetchFile_fasta
         val fasta_loc
 
     output:
@@ -72,7 +72,7 @@ process download_gtf {
     tag "${gtf_name}"
 
     input:
-        path script_fetchFile
+        path script_fetchFile_gtf
         val gtf_loc
 
     output:
