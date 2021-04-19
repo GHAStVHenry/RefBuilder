@@ -84,6 +84,16 @@ process download_gtf {
         """
 }
 
+//distribute fasta and gtf files to different build processes
+fasta.into{
+    fasta_hisat2
+    fasta_star
+}
+gtf.into{
+    gtf_hisat2
+    gtf_star
+}
+
 /*
  build_hisat2: build HISAT2 references
   */
@@ -129,4 +139,3 @@ process build_star {
         bash starBuild.sh -f ${fasta} -g ${gtf}
         """
 }
-
