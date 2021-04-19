@@ -53,7 +53,7 @@ process download_fasta {
     tag "${fasta_name}"
 
     input:
-        path script_fetchFile_fasta
+        path script_fetchFile from script_fetchFile_fasta
         val fasta_loc
 
     output:
@@ -72,7 +72,7 @@ process download_gtf {
     tag "${gtf_name}"
 
     input:
-        path script_fetchFile_gtf
+        path script_fetchFile from script_fetchFile_gtf
         val gtf_loc
 
     output:
@@ -102,8 +102,8 @@ process build_hisat2 {
 
     input:
         path script_hisat2Build
-        tuple val(name_fasta), path(fasta)
-        tuple val(name_gtf), path(gtf)
+        tuple val(name_fasta), path(fasta) from fasta_hisat2
+        tuple val(name_gtf), path(gtf) from gtf_hisat2
 
     output:
         path "hisat2/*" into ref_hisat2
@@ -125,8 +125,8 @@ process build_star {
 
     input:
         path script_starBuild
-        tuple val(name_fasta), path(fasta)
-        tuple val(name_gtf), path(gtf)
+        tuple val(name_fasta), path(fasta) from fasta_star
+        tuple val(name_gtf), path(gtf) from gtf_star
 
     output:
         path "star/*" into ref_star
