@@ -1,7 +1,5 @@
 #!/usr/bin/env nextflow
 
-nextflow.enabled.dsl = 2
-
 //define input files
 params.fasta_loc = "ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37/GRCh38.p13.genome.fa.gz"
 params.fasta_name = "GRCh38.p13"
