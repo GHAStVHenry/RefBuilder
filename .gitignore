@@ -360,8 +360,8 @@ $RECYCLE.BIN/
 
 !.gitkeep
 
-.nextflow/*
-work/*
+*/.nextflow/*
+*/work/*
 pipeline_trace*.txt*
 .nextflow*.log*
 report*.html*
