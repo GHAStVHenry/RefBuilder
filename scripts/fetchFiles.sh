@@ -42,8 +42,20 @@ main(){
             echo "LOG: file does exists"
             source="url"
         else
-            echo "LOG: file does not exist"
-            exit 1
+            if grep -q "501 methodnotimplemented" downloadTest.log
+            then
+                if grep -q "saved" downloadTest.log
+                then
+                    echo "LOG: file does exists"
+                    source="url"
+                else
+                    echo "LOG: file does not exist"
+                    exit 1
+                fi
+            else
+                echo "LOG: file does not exist"
+                exit 1
+            fi
         fi
     else
         if grep -q "failed: Name or service not known" downloadTest.log
