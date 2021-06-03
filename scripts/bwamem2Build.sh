@@ -40,7 +40,7 @@ main(){
     bwa-mem2 index genome.fa
 
     #move the bwa-mem2 reference to output folder
-    echo "LOG: move reference to output folder
+    echo "LOG: move reference to output folder"
     cp genome.fa* ./bwamem2/
 }
 

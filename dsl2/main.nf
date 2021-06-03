@@ -13,6 +13,15 @@ params.hisat2 = true
 params.star = true
 params.bwamem2 = true
 
+//parse veriables
+fasta_loc = Channel.fromPath(params.fasta_loc)
+fasta_name = params.fasta_name
+gtf_loc = Channel.fromPath(params.gtf_loc)
+gtf_name = params.gtf_name
+hisat2 = params.hisat2
+star = params.star
+bwamem2 = params.bwamem2
+
 //define fixed files
 script_fetchFile = Channel.fromPath("../scripts/fetchFiles.sh")
 script_hisat2Build = Channel.fromPath("../scripts/hisat2Build.sh")
@@ -40,6 +49,6 @@ bwa-mem2:	${params.bwamem2}
 include { genomeFetch_pipe; referenceBuild_pipe } from './modules/RefBuilder_modules'
 
 workflow {
-    genomeFetch_pipe( script_fetchFile, params.fasta_name, params.fasta_loc, params.gtf_name, params.gtf_loc)
-    referenceBuild_pipe( script_hisat2Build, script_starBuild, script_bwamem2Build, params.hisat2, params.star, params.bwamem2, genomeFetch_pipe.out.fasta, genomeFetch_pipe.out.gtf )
+    genomeFetch_pipe( script_fetchFile, fasta_name,asta_loc, gtf_name, gtf_loc)
+    referenceBuild_pipe( script_hisat2Build, script_starBuild, script_bwamem2Build, hisat2, star, bwamem2, genomeFetch_pipe.out.fasta, genomeFetch_pipe.out.gtf )
 }

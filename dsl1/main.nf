@@ -12,9 +12,9 @@ params.star = true
 params.bwamem2 = true
 
 //parse veriables
-fasta_loc = params.fasta_loc
+fasta_loc = Channel.fromPath(params.fasta_loc)
 fasta_name = params.fasta_name
-gtf_loc = params.gtf_loc
+gtf_loc = Channel.fromPath(params.gtf_loc)
 gtf_name = params.gtf_name
 hisat2 = params.hisat2
 star = params.star
@@ -58,7 +58,7 @@ process download_fasta {
 
     input:
         path script_fetchFile from script_fetchFile_fasta
-        val fasta_loc
+        path fasta_loc
 
     output:
         tuple val(fasta_name), file('genome.fa.gz') into fasta
@@ -77,7 +77,7 @@ process download_gtf {
 
     input:
         path script_fetchFile from script_fetchFile_gtf
-        val gtf_loc
+        path gtf_loc
 
     output:
         tuple val(gtf_name), file('genome.gtf.gz') into gtf
