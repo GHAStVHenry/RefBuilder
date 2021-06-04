@@ -31,48 +31,6 @@ main(){
         usage
     fi
 
-    #test location
-    echo "LOG: testing location"
-    wget --spider ${loc} 2> downloadTest.log
-    if grep -q "connected" downloadTest.log
-    then
-        echo "LOG: url host exists"
-        if grep -q "File .* exists" downloadTest.log
-        then
-            echo "LOG: file does exists"
-            source="url"
-        else
-            echo "LOG: file does not exist"
-            exit 1
-        fi
-    else
-        if grep -q "failed: Name or service not known" downloadTest.log
-        then
-            echo "LOG: url host does not exist"
-            exit 1
-        else
-            if grep -q "Scheme missing" downloadTest.log
-            then
-                echo "LOG: not a valid"
-                if [ -d $(dirname ${loc}) ]
-                then
-                    echo "LOG: local folder exists"
-                    if [ -f ${loc} ]
-                    then
-                        echo "LOG: local file exists"
-                        source="local"
-                    else
-                        echo "LOG: local file does not exist"
-                        exit 1
-                    fi
-                else
-                    echo "LOG: local folder does not exist"
-                    exit 1
-                fi
-            fi
-        fi
-    fi
-
     #test filename
     echo "LOG: testing filename"
     file=$(basename ${loc})
@@ -131,20 +89,6 @@ main(){
     else
         echo "LOG: file format does not match standard"
         exit 1
-    fi
-
-    #fetch file
-    echo "LOG: fetching file"
-    if [ "${source}" == "url" ]
-    then
-        echo "LOG: downloading file"
-        wget ${loc}
-    elif [ "${source}" == "local" ]
-    then
-        echo "LOG: copying file"
-        cp ${loc} ./
-    else
-        echo "LOG: unexpected error - unknown source code"
     fi
 
     #rename file (and gzip if necessary)

@@ -82,6 +82,29 @@ process build_star {
         """
 }
 
+/*
+ build_bwamem2: build bwa-mem2 references
+  */
+process build_bwamem2 {
+    tag "${fasta_name}"
+
+    input:
+        path script_bwamem2Build
+        tuple val(name_fasta), path(fasta)
+
+    output:
+        path "bwamem2/*" into ref_bwamem2
+
+    when:
+        bwamem2
+    
+    script:
+        """
+        bash bwamem2Build.sh -f ${fasta}
+        """
+}
+
+
 workflow genomeFetch_pipe {
     take:
         script_fetchFile
@@ -105,6 +128,7 @@ workflow referenceBuild_pipe {
         script_starBuild
         hisat2
         star
+        bwamem2
         fasta_name
         fasta
         gtf
@@ -112,8 +136,10 @@ workflow referenceBuild_pipe {
     main:
         build_hisat2( script_hisat2Build, hisat2, fasta_name, fasta, gtf )
         build_star( script_starBuild, star, fasta_name, fasta, gtf )
+        build_bwamem2( script_bwamem2Build, star, fasta_name, fasta )
 
     emit:
         ref_hisat2 = build_hisat2.out
         ref_star = build_star.out
+        ref_bwamem2 = build_bwamem2.out
 }

@@ -3,25 +3,28 @@
 //define input files
 params.fasta_loc = "ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37/GRCh38.p13.genome.fa.gz"
 params.fasta_name = "GRCh38.p13"
-params.gtf_loc = "ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37/gencode.v37.annotation.gtf.gz"
+params.gtf_loc = "ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37/gencode.v37.primary_assembly.annotation.gtf.gz"
 params.gtf_name = "GENCODE.v37"
 
 //define aligner to build references for
-params.hisat2=true
-params.star=true
+params.hisat2 = true
+params.star = true
+params.bwamem2 = true
 
 //parse veriables
-fasta_loc = params.fasta_loc
+fasta_loc = Channel.fromPath(params.fasta_loc)
 fasta_name = params.fasta_name
-gtf_loc = params.gtf_loc
+gtf_loc = Channel.fromPath(params.gtf_loc)
 gtf_name = params.gtf_name
 hisat2 = params.hisat2
 star = params.star
+bwamem2 = params.bwamem2
 
 //define fixed files
 script_fetchFile = Channel.fromPath("../scripts/fetchFiles.sh")
 script_hisat2Build = Channel.fromPath("../scripts/hisat2Build.sh")
 script_starBuild = Channel.fromPath("../scripts/starBuild.sh")
+script_bwamem2Build = Channel.fromPath("../scripts/bwamem2Build.sh")
 
 //distribute fixed files
 script_fetchFile.into{
@@ -38,11 +41,12 @@ log.info """\
 
 Reference Builder
 =================
-fasta:  ${params.fasta_name}
-gtf:    ${params.gtf_name}
+fasta:  	${params.fasta_name}
+gtf:    	${params.gtf_name}
 ------------------
-HISAT2: ${params.hisat2}
-STAR:   ${params.star}
+HISAT2: 	${params.hisat2}
+STAR:   	${params.star}
+bwa-mem2:	${params.bwamem2}
 ------------------
 """
 
@@ -54,7 +58,7 @@ process download_fasta {
 
     input:
         path script_fetchFile from script_fetchFile_fasta
-        val fasta_loc
+        path fasta_loc
 
     output:
         tuple val(fasta_name), file('genome.fa.gz') into fasta
@@ -73,7 +77,7 @@ process download_gtf {
 
     input:
         path script_fetchFile from script_fetchFile_gtf
-        val gtf_loc
+        path gtf_loc
 
     output:
         tuple val(gtf_name), file('genome.gtf.gz') into gtf
@@ -88,6 +92,7 @@ process download_gtf {
 fasta.into{
     fasta_hisat2
     fasta_star
+    fasta_bwamem2
 }
 gtf.into{
     gtf_hisat2
@@ -137,5 +142,27 @@ process build_star {
     script:
         """
         bash starBuild.sh -f ${fasta} -g ${gtf}
+        """
+}
+
+/*
+ build_bwamem2: build bwa-mem2 references
+  */
+process build_bwamem2 {
+    tag "${fasta_name}"
+
+    input:
+        path script_bwamem2Build
+        tuple val(name_fasta), path(fasta) from fasta_bwamem2
+
+    output:
+        path "bwamem2/*" into ref_bwamem2
+
+    when:
+        bwamem2
+    
+    script:
+        """
+        bash bwamem2Build.sh -f ${fasta}
         """
 }
