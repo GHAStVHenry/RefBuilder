@@ -1,10 +1,14 @@
 #!/usr/bin/env nextflow
 
 //define input files
-params.fasta_loc = "ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37/GRCh38.p13.genome.fa.gz"
-params.fasta_name = "GRCh38.p13"
-params.gtf_loc = "ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37/gencode.v37.primary_assembly.annotation.gtf.gz"
-params.gtf_name = "GENCODE.v37"
+//params.fasta_loc = "ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37/GRCh38.p13.genome.fa.gz"
+//params.fasta_name = "GRCh38.p13"
+//params.gtf_loc = "ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37/gencode.v37.primary_assembly.annotation.gtf.gz"
+//params.gtf_name = "GENCODE.v37"
+params.fasta_loc = "ftp://ftp.ensembl.org/pub/release-104/fasta/saccharomyces_cerevisiae/dna/Saccharomyces_cerevisiae.R64-1-1.dna.toplevel.fa.gz"
+params.fasta_name = "Saccharomyces_cerevisiae.R64-1-1"
+params.gtf_loc = "ftp://ftp.ensembl.org/pub/release-104/gtf/saccharomyces_cerevisiae/Saccharomyces_cerevisiae.R64-1-1.104.gtf.gz"
+params.gtf_name = "Saccharomyces_cerevisiae.R64-1-1"
 
 //define aligner to build references for
 params.hisat2 = true
@@ -21,15 +25,15 @@ star = params.star
 bwamem2 = params.bwamem2
 
 //define fixed files
-script_fetchFile = Channel.fromPath("../scripts/fetchFiles.sh")
+script_testFile = Channel.fromPath("../scripts/testFiles.sh")
 script_hisat2Build = Channel.fromPath("../scripts/hisat2Build.sh")
 script_starBuild = Channel.fromPath("../scripts/starBuild.sh")
 script_bwamem2Build = Channel.fromPath("../scripts/bwamem2Build.sh")
 
 //distribute fixed files
-script_fetchFile.into{
-    script_fetchFile_fasta
-    script_fetchFile_gtf
+script_testFile.into{
+    script_testFile_fasta
+    script_testFile_gtf
 }
 
 log.info """\
@@ -53,11 +57,11 @@ bwa-mem2:	${params.bwamem2}
 /*
  download_fasta: downloads the fasta
  */
-process download_fasta {
+process test_fasta {
     tag "${fasta_name}"
 
     input:
-        path script_fetchFile from script_fetchFile_fasta
+        path script_testFile from script_testFile_fasta
         path fasta_loc
 
     output:
@@ -65,18 +69,18 @@ process download_fasta {
 
     script:
         """
-        bash ${script_fetchFile} -t fasta -l ${fasta_loc}
+        bash ${script_testFile} -t fasta -l ${fasta_loc}
         """
 }
 
 /*
  download_gtf: downloads the gtf
  */
-process download_gtf {
+process test_gtf {
     tag "${gtf_name}"
 
     input:
-        path script_fetchFile from script_fetchFile_gtf
+        path script_testFile from script_testFile_gtf
         path gtf_loc
 
     output:
@@ -84,7 +88,7 @@ process download_gtf {
 
     script:
         """
-        bash ${script_fetchFile} -t gtf -l ${gtf_loc}
+        bash ${script_testFile} -t gtf -l ${gtf_loc}
         """
 }
 
@@ -118,7 +122,7 @@ process build_hisat2 {
     
     script:
         """
-        bash hisat2Build.sh -f ${fasta} -g ${gtf}
+        bash ${script_hisat2Build} -f ${fasta} -g ${gtf}
         """
 }
 
@@ -141,7 +145,7 @@ process build_star {
     
     script:
         """
-        bash starBuild.sh -f ${fasta} -g ${gtf}
+        bash ${script_starBuild} -f ${fasta} -g ${gtf}
         """
 }
 
@@ -163,6 +167,6 @@ process build_bwamem2 {
     
     script:
         """
-        bash bwamem2Build.sh -f ${fasta}
+        bash ${script_bwamem2Build} -f ${fasta}
         """
 }
